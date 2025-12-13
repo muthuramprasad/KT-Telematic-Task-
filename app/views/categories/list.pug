@@ -1,0 +1,76 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    .d-flex.justify-content-between.align-items-center.mb-3
+      h2 Asset Categories
+      a.btn.btn-primary.btn-sm(href="/api/categories/add") Add Category
+
+    // Search Row
+    form(method="GET", action="/api/categories/view")
+      .row.mb-3
+        .col-md-4
+          .input-group
+            input.form-control(
+              type="text",
+              name="search",
+              placeholder="Search by category name...",
+              value=search
+            )
+
+            
+            
+            button.btn.btn-success.col-md-2.ms-5.w-10(type="submit") Search
+             
+            a.btn.btn-secondary.col-md-2.ms-5.w-10(href="/api/categories/view") Clear
+
+    // Category Table
+    if categories.length
+      table.table.table-bordered.table-striped
+        thead
+          tr
+            th S.No
+            th Name
+            th Description
+            th Created Date
+            th Actions
+        tbody
+          each cat, index in categories
+            tr
+              td= (page - 1) * itemPerPage + index + 1
+              td= cat.name
+              td= cat.description || "N/A"
+              td= cat.createdAt.toDateString()
+              td
+                a.btn.btn-sm.btn-outline-warning(
+                  href=`/api/categories/edit/${cat.id}`
+                ) Edit
+                a.btn.btn-sm.btn-outline-danger.ms-2(
+                  href=`/api/categories/delete/${cat.id}?page=${page}&itemPerPage=${itemPerPage}&search=${search || ''}`
+                ) Delete
+
+      // Pagination (IMMEDIATELY BELOW THE TABLE)
+      if categories.length 
+        nav.mt-3
+          ul.pagination.justify-content-end
+            // Prev Button
+            li.page-item(class=page <= 1 ? "disabled" : "")
+              a.page-link(
+                href=`?page=${page - 1}&itemPerPage=${itemPerPage}&search=${search || ''}`
+              ) Prev
+
+            // Page Numbers
+            each num in [...Array(totalPages).keys()].map(n => n + 1)
+              li.page-item(class=(page === num ? "active" : ""))
+                a.page-link(
+                  href=`?page=${num}&itemPerPage=${itemPerPage}&search=${search || ''}`
+                ) #{num}
+
+            // Next Button
+            li.page-item(class=page >= totalPages ? "disabled" : "")
+              a.page-link(
+                href=`?page=${page + 1}&itemPerPage=${itemPerPage}&search=${search || ''}`
+              ) Next
+
+    else
+      p.text-center.text-muted.mt-4 No asset categories found.

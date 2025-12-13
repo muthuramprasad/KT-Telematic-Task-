@@ -1,0 +1,68 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    h2= title
+
+    form(method="POST", action=isEdit ? `/api/assets/update/${asset.id}` : "/api/assets/create")
+
+      // Asset Name (Make/Model)
+      .mb-3
+        label.form-label Asset Name/Model
+        input.form-control(
+          type="text",
+          name="name",
+          required=true,
+          value=(isEdit ? asset.name : "")
+        )
+
+      // Serial Number
+      .mb-3
+        label.form-label Serial Number (Unique)
+        input.form-control(
+          type="text",
+          name="serialNumber",
+          required=true,
+          value=(isEdit ? asset.serialNumber : "")
+        )
+
+      // Category
+      .mb-3
+        label.form-label Asset Category
+        select.form-control(name="categoryId", required=true)
+          option(value="") Select Category
+          each cat in categories
+            option(
+              value=cat.id, 
+              selected=(isEdit && asset.categoryId === cat.id)
+            )= cat.name
+
+
+      // Select Employee
+      .mb-3
+        label.form-label Current Holder (Employee)
+        select.form-control(name="currentEmployeeId", required=false)
+          option(value="") Select Employee ID (Optional)
+          
+          each employee in employees
+            option(
+              value=employee.id,
+             selected=(isEdit && asset.currentEmployeeId == employee.id)
+            )= employee.firstname
+        
+
+      // Select Status (Handles both Create and Edit - and now multiple selection)
+      .mb-3
+        label.form-label Status
+        select.form-control(name="status", required=true) 
+          each assetStatus in assetStatuses
+            option(
+              value=assetStatus, 
+              selected=(isEdit && asset.status === assetStatus) || (!isEdit && assetStatus === 'IN_STOCK')
+            ) #{assetStatus.replace('_', ' ')}
+            
+
+      // Submit Button
+      button.btn.btn-success(type="submit")= isEdit ? "Update Asset" : "Create Asset"
+
+      a.btn.btn-secondary.ms-2(href="/api/assets/view") Cancel

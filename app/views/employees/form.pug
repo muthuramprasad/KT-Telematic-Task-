@@ -1,0 +1,39 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    h2= title
+
+    form(method="POST", action=isEdit ? `/api/employees/update/${employee.id}` : "/api/employees/create")
+
+      // First Name
+      .mb-3
+        label.form-label First Name
+        input.form-control(
+          type="text",
+          name="firstname",
+          required=true,
+          value=(isEdit ? employee.firstname : "")
+        )
+
+      // Department
+      .mb-3
+        label.form-label Department
+        input.form-control(
+          type="text",
+          name="department",
+          required=true,
+          value=(isEdit ? employee.department : "")
+        )
+
+      // Status
+      .mb-3
+        label.form-label Status
+        select.form-control(name="status", required=true)
+          option(value="active", selected=isEdit && employee.status==="active") Active
+          option(value="inactive", selected=isEdit && employee.status==="inactive") Inactive
+
+      // Submit Button
+      button.btn.btn-success(type="submit")= isEdit ? "Update Employee" : "Create Employee"
+
+      a.btn.btn-secondary.ms-2(href="/api/employees/view") Cancel

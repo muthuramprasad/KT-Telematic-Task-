@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    h2= title
+
+    if scrappableAssets.length === 0
+      .alert.alert-info(role="alert") No assets available to be scrapped.
+      a.btn.btn-secondary.ms-2(href="/api/assets/view") Back to Assets
+    else
+      form(method="POST", action="/api/transactions/scrap")
+
+        // Select Asset
+        .mb-3
+          label.form-label Asset to Scrap (Will be marked as SCRAPPED)
+          select.form-control(name="assetID", required=true)
+            option(value="") Select Asset to Scrap
+            each asset in scrappableAssets
+              - var currentHolder = asset.currentHolder ? asset.currentHolder.firstname : 'N/A'
+              option(value=asset.id)= `${asset.name} (${asset.serialNumber}) | Current Status: ${asset.status.replace('_', ' ')} | Holder: ${currentHolder}`
+
+        // Scrap Reason
+        .mb-3
+          label.form-label Scrap Reason (Mandatory)
+          input.form-control(
+            type="text",
+            name="reason",
+            required=true,
+            placeholder="e.g., End-of-life, Damaged, Obsolete"
+          )
+
+        // Submit Button
+        button.btn.btn-danger(type="submit") Scrap Asset Permanently
+
+        a.btn.btn-secondary.ms-2(href="/api/assets/view") Cancel

@@ -1,0 +1,22 @@
+/* RESET YOUR OLD TABLE STYLING TO ALLOW DATATABLES TO WORK */
+table {
+  border-collapse: separate !important;
+  width: 100% !important;
+}
+
+td, th {
+  border: none !important;
+}
+
+tr:nth-child(even) {
+  background-color: inherit !important;
+}
+
+/* OPTIONAL – Improve spacing for DataTables */
+.dataTables_wrapper .dataTables_filter input {
+  margin-left: 10px;
+}
+
+.dataTables_wrapper .dataTables_length select {
+  margin-right: 5px;
+}

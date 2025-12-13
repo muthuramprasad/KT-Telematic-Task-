@@ -1,0 +1,95 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    .d-flex.justify-content-between.align-items-center.mb-3
+      h2 Employee List
+      a.btn.btn-primary.btn-sm(href="/api/employees/add") Add Employee
+
+    // Search + Filter Row
+    form(method="GET", action="/api/employees/view")
+      // Keep itemPerPage during submit
+      input(type="hidden", name="itemPerPage", value=itemPerPage)
+
+      .row.mb-3
+        .col-md-4
+          input.form-control(
+            type="text",
+            name="search",
+            placeholder="Search by firstname...",
+            value=search
+          )
+
+        .col-md-3
+          select.form-control(name="status")
+            option(value="") All Status
+            option(value="active", selected=(status==="active")) Active
+            option(value="inactive", selected=(status==="inactive")) Inactive
+
+        .col-md-2
+          button.btn.btn-success.w-100.btn-sm(type="submit") search
+
+        .col-md-2
+          a.btn.btn-secondary.w-100.btn-sm(href="/api/employees/view") Clear
+
+    // Employee Table
+    if employees.length
+      table.table.table-bordered.table-striped
+        thead
+          tr
+          th S.No
+            
+            th First Name
+            th Department
+            th ID
+            th Status
+            th Created Date
+            th Actions
+        tbody
+          each emp, index in employees
+            tr
+            td= ((page - 1) * itemPerPage) + index + 1
+             
+              td= emp.firstname
+              td= emp.department
+               td= emp.id
+              td
+                if emp.status === "active"
+                  span.badge.bg-success Active
+                else
+                  span.badge.bg-danger Inactive
+              td= emp.createdAt.toDateString()
+
+              td
+                a.btn.btn-sm.btn-outline-warning(href=`/api/employees/edit/${emp.id}`) Edit
+                a.btn.btn-sm.btn-outline-danger.ms-2(
+  href=`/api/employees/delete/${emp.id}?page=${page}&itemPerPage=${itemPerPage}&search=${search || ''}&status=${status || ''}`
+) Delete
+
+
+      // Pagination IMMEDIATELY BELOW THE TABLE
+      if employees.length 
+        nav.mt-3
+          ul.pagination.justify-content-end
+
+            // Prev Button
+            li.page-item(class=(page <= 1 ? "disabled" : ""))
+              a.page-link(
+                href=`?page=${page-1}&itemPerPage=${itemPerPage}&search=${search || ''}&status=${status || ''}`
+              ) Prev
+
+            // Page Numbers
+            each num in [...Array(totalPages).keys()].map(n => n + 1)
+              li.page-item(class=(page === num ? "active" : ""))
+                a.page-link(
+                  href=`?page=${num}&itemPerPage=${itemPerPage}&search=${search || ''}&status=${status || ''}`
+                ) #{num}
+
+            // Next Button
+            li.page-item(class=(page >= totalPages ? "disabled" : ""))
+              a.page-link(
+                href=`?page=${page+1}&itemPerPage=${itemPerPage}&search=${search || ''}&status=${status || ''}`
+              ) Next
+
+    else
+      p.text-center.text-muted.mt-4 No employees found.

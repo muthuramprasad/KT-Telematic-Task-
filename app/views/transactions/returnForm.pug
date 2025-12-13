@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    h2= title
+
+    if issuedAssets.length === 0
+      .alert.alert-warning(role="alert") No assets are currently issued to an employee.
+      a.btn.btn-secondary.ms-2(href="/api/assets/view") Back to Assets
+    else
+      form(method="POST", action="/api/transactions/return")
+
+        // Select Asset
+        .mb-3
+          label.form-label Asset to Return (Status: ISSUED)
+          select.form-control(name="assetID", required=true)
+            option(value="") Select Issued Asset
+            each asset in issuedAssets
+              option(value=asset.id)= `${asset.name} | Holder: ${asset.currentHolder.firstname}`
+
+        // Return Reason (Optional for now, but good for reports)
+        .mb-3
+          label.form-label Reason for Return (e.g., Upgrade, Repair, Resignation)
+          input.form-control(
+            type="text",
+            name="reason",
+            placeholder="Optional reason for returning asset"
+          )
+
+        // Submit Button
+        button.btn.btn-success(type="submit") Process Return
+
+        a.btn.btn-secondary.ms-2(href="/api/assets/view") Cancel

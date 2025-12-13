@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    h2= title
+
+    form(method="POST", action=isEdit ? `/api/categories/update/${category.id}` : "/api/categories/create")
+
+      // Category Name
+      .mb-3
+        label.form-label Category Name
+        input.form-control(
+          type="text",
+          name="name",
+          required=true,
+          value=(isEdit ? category.name : "")
+        )
+
+      // Description
+      .mb-3
+        label.form-label Description (Optional)
+        textarea.form-control(
+          name="description",
+          rows="3"
+        )= (isEdit ? category.description : "")
+
+      // Submit Button
+      button.btn.btn-success(type="submit")= isEdit ? "Update Category" : "Create Category"
+
+      a.btn.btn-secondary.ms-2(href="/api/categories/view") Cancel

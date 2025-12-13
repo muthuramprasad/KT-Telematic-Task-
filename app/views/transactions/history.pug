@@ -1,0 +1,74 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    h2= title
+
+    // Asset Selector Form
+    form(method="GET", action="/api/transactions/history")
+      .row.mb-4.align-items-end
+        .col-md-6
+          label.form-label Select Asset to View History
+          select.form-control(name="assetID", required=true, onchange="this.form.submit()")
+            option(value="") Select Asset
+            each asset in assets
+              option(value=asset.id, selected=(assetID == asset.id))= `${asset.name} (${asset.serialNumber})`
+        
+        if assetID
+          .col-md-2
+            a.btn.btn-secondary.w-100(href="/api/transactions/history") Clear History
+
+    if selectedAsset
+      // Asset Details Card
+      .card.mb-4
+        .card-header
+          h5.mb-0 Asset Details
+        .card-body
+          .row
+            .col-md-6
+              strong Name: 
+              span= selectedAsset.name
+              br
+              strong Category: 
+              span= selectedAsset.category.name
+            .col-md-6
+              strong Serial Number: 
+              span= selectedAsset.serialNumber
+              br
+              strong Current Status: 
+              span.badge.bg-primary= selectedAsset.status.replace('_', ' ')
+
+      // History Table
+      h3 Transaction Log
+      if history.length
+        table.table.table-bordered.table-striped
+          thead
+            tr
+              th Date
+              th Transaction Type
+              th Employee
+              th Notes
+          tbody
+            each tx in history
+              tr
+                td= tx.date.toLocaleString()
+                td
+                  - var txBadge = 'bg-secondary';
+                  if tx.type === 'ISSUE'
+                    - txBadge = 'bg-warning';
+                  else if tx.type === 'RETURN'
+                    - txBadge = 'bg-success';
+                  else if tx.type === 'SCRAP'
+                    - txBadge = 'bg-danger';
+                  
+                  span.badge(class=txBadge)= tx.type
+                
+                td
+                  if tx.employee
+                    span= `${tx.employee.firstname} (${tx.employee.department})`
+                  else
+                    span N/A
+                td N/A // Placeholder for future transaction notes/reasons
+
+      else
+        p.text-center.text-muted No transaction history found for this asset.

@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .container.mt-4
+    h2= title
+
+    if availableAssets.length === 0 || activeEmployees.length === 0
+      .alert.alert-warning(role="alert")
+        | Cannot issue asset. Ensure you have assets that are 'IN_STOCK' and employees who are 'Active'.
+      a.btn.btn-secondary.ms-2(href="/api/assets/view") Back to Assets
+    else
+      form(method="POST", action="/api/transactions/issue")
+
+        // Select Asset
+        .mb-3
+          label.form-label Asset (IN_STOCK)
+          select.form-control(name="assetID", required=true)
+            option(value="") Select Asset to Issue
+            each asset in availableAssets
+              option(value=asset.id)= `${asset.name} (${asset.category.name} | ${asset.serialNumber})`
+
+        // Select Employee
+        .mb-3
+          label.form-label Employee (Active)
+          select.form-control(name="employeeID", required=true)
+            option(value="") Select Employee
+            each employee in activeEmployees
+              option(value=employee.id)= `${employee.firstname} (${employee.department})`
+
+        // Submit Button
+        button.btn.btn-primary(type="submit") Issue Asset
+
+        a.btn.btn-secondary.ms-2(href="/api/assets/view") Cancel

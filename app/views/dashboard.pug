@@ -1,0 +1,58 @@
+extends layout
+
+block content
+  .container.mt-4
+    h2.mb-4 Application Dashboard
+
+    
+    .row.mb-5
+      .col-md-3
+        .card.text-white.bg-primary.mb-3
+          .card-body
+            h5.card-title Total Assets
+            h1.card-text= totalAssets
+      
+      .col-md-3
+        .card.text-white.bg-success.mb-3
+          .card-body
+            h5.card-title Assets IN STOCK
+            h1.card-text= assetsInStock
+      
+      .col-md-3
+        .card.text-white.bg-warning.mb-3
+          .card-body
+            h5.card-title Assets ISSUED
+            h1.card-text= assetsIssued
+
+      .col-md-3
+        .card.text-white.bg-info.mb-3
+          .card-body
+            h5.card-title Total Employees
+            h1.card-text= totalEmployees
+
+
+  
+    h3.mb-3  Inventory Stock Overview (Status: IN_STOCK)
+    
+    if stockByCategory.length
+      table.table.table-bordered.table-striped
+        thead
+          tr
+            th S.No
+            th Asset Category
+            th Units in Stock
+        tbody
+          each stock, index in stockByCategory
+            tr
+              td= index + 1
+              td= stock['category.name']
+              td= stock.stockCount
+      
+     
+      .alert.alert-light.text-end.mt-3
+        strong Total Assets In Stock: 
+        span= assetsInStock
+        | (Note: Total financial value cannot be calculated without an Asset 'purchaseValue' field.)
+    
+    else
+      p.text-center.text-muted.mt-4 No assets currently listed as IN STOCK.
