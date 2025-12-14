@@ -57,7 +57,7 @@ db.AssetTransaction.belongsTo(db.Asset, {
   as: 'asset'
 });
 
-// Employee → Transactions
+
 db.Employee.hasMany(db.AssetTransaction, {
   foreignKey: 'employeeID',
   as: 'transactions'
